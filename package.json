@@ -1,0 +1,15 @@
+{
+  "name": "redis-services",
+  "version": "1.0.0",
+  "description": "",
+  "main": "redis.service.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "redis": "^3.0.2"
+  }
+}
