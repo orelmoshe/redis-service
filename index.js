@@ -10,6 +10,7 @@ const run = async () => {
 		value = await redisService.get('software engineer');
 		console.log(value);
 		await redisService.remove('software engineer');
+		await redisService.setWithTTL('software engineer', 'orel moshe',30);
 
 		// Store objects in Redis
 		const isHmset = await redisService.hmset('programmer', { name: 'orel moshe', company: 'round trip' });

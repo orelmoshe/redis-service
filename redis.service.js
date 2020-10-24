@@ -3,6 +3,7 @@ const redis = require('redis');
 class RedisService {
 	static instance;
 	client;
+	defaultTTL = 20; // minutes
 	constructor() {
 		if (RedisService.instance) {
 			return RedisService.instance;
@@ -23,6 +24,18 @@ class RedisService {
 			console.error(error);
 		});
 	}
+
+	expire(key,minutes){
+		return new Promise((resolve, reject) => {
+			try {
+				const ttl = minutes || this.defaultTTL;
+				this.client.expire(key, ttl * 60 * 1000);
+			} catch (error) {
+				throw `expire ${key} failed`;
+			}
+		});
+	}
+
 	// Store a string in Redis
 	get(key) {
 		return new Promise((resolve, reject) => {
@@ -36,7 +49,7 @@ class RedisService {
 			}
 		});
 	}
-	// Store a string in Redis
+
 	set(key, value) {
 		return new Promise((resolve, reject) => {
 			try {
@@ -49,7 +62,22 @@ class RedisService {
 			}
 		});
 	}
-	// Store a string in Redis
+
+  // ttl = minutes
+	setWithTTL(key, value,minutes) {
+			return new Promise((resolve, reject) => {
+				try {
+					const ttl = minutes || this.defaultTTL;
+					this.client.set(key, value,'EX', 1000 * 60 * ttl, (err, res) => {
+						if (err) return reject(err);
+						return resolve(res);
+					});
+				} catch (error) {
+					throw 'set with ttl failed';
+				}
+			});
+		}
+	
 	remove(key) {
 		return new Promise((resolve, reject) => {
 			try {
@@ -67,6 +95,7 @@ class RedisService {
 			}
 		});
 	}
+
 	// Store objects in Redis
 	hmset(key, value) {
 		return new Promise((resolve, reject) => {
@@ -80,7 +109,7 @@ class RedisService {
 			}
 		});
 	}
-	// Store objects in Redis
+
 	hgetall(key) {
 		return new Promise((resolve, reject) => {
 			try {
@@ -93,6 +122,7 @@ class RedisService {
 			}
 		});
 	}
+
 	// Store lists in Redis
 	rpush(arr) {
 		return new Promise((resolve, reject) => {
@@ -106,7 +136,7 @@ class RedisService {
 			}
 		});
 	}
-	// Store lists in Redis
+
 	lrange(key) {
 		return new Promise((resolve, reject) => {
 			try {
